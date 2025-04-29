@@ -35,7 +35,7 @@ const httpServer = http.createServer((req, res) => {
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 40px;
-            background-color: #f4f4f4;
+            background-color: #e6f7ff; 
             color: #333;
           }
           h1 {
@@ -77,13 +77,6 @@ const httpServer = http.createServer((req, res) => {
             width: 100%;
             height: 315px;
             margin-top: 10px;
-          }
-          #news-list div {
-            animation: pulse 1.5s infinite;
-          }
-          @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
           }
         </style>
       </head>
