@@ -90,7 +90,7 @@ const httpServer = http.createServer((req, res) => {
 
   <script>
     const apiKey = 'ba21aa47cca24a1e93b84b4ad4c286be'; // <-- 替换成你的 key
-    const url = 'https://newsapi.org/v2/everything?q=gaza&sortBy=publishedAt&language=en&pageSize=5&apiKey=${apiKey}';
+    const url = "https://newsapi.org/v2/everything?q=gaza&sortBy=publishedAt&language=en&pageSize=5&apiKey=" + apiKey;
 
     fetch(url)
       .then(response => response.json())
