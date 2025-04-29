@@ -1,0 +1,20 @@
+{
+  "name": "java-website",
+  "version": "1.0.0",
+  "description": "java web Server",
+  "main": "website.js",
+  "author": "",
+  "repository": "",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "start": "node website.js"
+  },
+  "dependencies": {
+    "ws": "^8.14.2",
+    "axios": "^1.6.2"
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}
