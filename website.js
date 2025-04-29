@@ -22,7 +22,7 @@ const httpServer = http.createServer((req, res) => {
   if (req.url === '/') {
     res.writeHead(200, { 'Content-Type': 'text/html' });
     res.end(`
-      <!DOCTYPE html>
+     <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -89,43 +89,48 @@ const httpServer = http.createServer((req, res) => {
   </div>
 
   <script>
-    const apiKey = 'ba21aa47cca24a1e93b84b4ad4c286be'; // <-- 替换成你的 key
-    const url = "https://newsapi.org/v2/everything?q=gaza&sortBy=publishedAt&language=en&pageSize=5&apiKey=" + apiKey;
+    var apiKey = 'YOUR_NEWS_API_KEY'; // ← 替换为你自己的 NewsAPI Key
+    var url = "https://newsapi.org/v2/everything?q=gaza&sortBy=publishedAt&language=en&pageSize=5&apiKey=" + apiKey;
 
     fetch(url)
-      .then(response => response.json())
-      .then(data => {
-        const newsList = document.getElementById('news-list');
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(data) {
+        var newsList = document.getElementById('news-list');
         newsList.innerHTML = '';
 
-        data.articles.forEach(article => {
-          const div = document.createElement('div');
+        for (var i = 0; i < data.articles.length; i++) {
+          var article = data.articles[i];
+          var div = document.createElement('div');
           div.className = 'article';
-          div.innerHTML = `
-            div.innerHTML = 
-            '<h3><a href="' + article.url + '" target="_blank">' + article.title + '</a></h3>' +
-            '<p><strong>' + new Date(article.publishedAt).toLocaleString() + '</strong></p>' +
-            (article.urlToImage ? '<img src="' + article.urlToImage + '" alt="News Image">' : '') +
-            '<p>' + (article.description || '') + '</p>';
 
+          var html = '<h3><a href="' + article.url + '" target="_blank">' + article.title + '</a></h3>';
+          html += '<p><strong>' + new Date(article.publishedAt).toLocaleString() + '</strong></p>';
 
-          // 简单判断是否是 YouTube 视频链接
-          if (article.url.includes('youtube.com/watch')) {
-            const videoId = article.url.split('v=')[1];
+          if (article.urlToImage) {
+            html += '<img src="' + article.urlToImage + '" alt="News Image">';
+          }
+
+          if (article.description) {
+            html += '<p>' + article.description + '</p>';
+          }
+
+          // 判断是否为 YouTube 链接并嵌入视频
+          if (article.url.indexOf("youtube.com/watch") !== -1) {
+            var videoId = article.url.split("v=")[1];
             if (videoId) {
-              div.innerHTML += `
-                <iframe src="https://www.youtube.com/embed/${videoId}" 
-                        frameborder="0" allowfullscreen></iframe>
-              `;
+              html += '<iframe src="https://www.youtube.com/embed/' + videoId + '" frameborder="0" allowfullscreen></iframe>';
             }
           }
 
+          div.innerHTML = html;
           newsList.appendChild(div);
-        });
+        }
       })
-      .catch(err => {
+      .catch(function(error) {
         document.getElementById('news-list').innerText = 'Failed to load news.';
-        console.error(err);
+        console.error('Error loading news:', error);
       });
   </script>
 </body>
