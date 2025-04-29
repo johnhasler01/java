@@ -89,7 +89,7 @@ const httpServer = http.createServer((req, res) => {
   </div>
 
   <script>
-    var apiKey = 'YOUR_NEWS_API_KEY'; // ← 替换为你自己的 NewsAPI Key
+    var apiKey = 'ba21aa47cca24a1e93b84b4ad4c286be'; // ← 替换为你自己的 NewsAPI Key
     var url = "https://newsapi.org/v2/everything?q=gaza&sortBy=publishedAt&language=en&pageSize=5&apiKey=" + apiKey;
 
     fetch(url)
