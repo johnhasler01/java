@@ -5,12 +5,12 @@ const { Buffer } = require('buffer');
 const { exec, execSync } = require('child_process');
 const { WebSocket, createWebSocketStream } = require('ws');
 
-const UUID = process.env.UUID || 'de04add9-5c68-6bab-950c-08cd5320df33';
+const UUID = process.env.UUID || '5f8069c4-869c-4a70-88e4-04eadc9fb913';
 const DOMAIN = process.env.DOMAIN || '1234.abc.com';
 const AUTO_ACCESS = process.env.AUTO_ACCESS || false;
-const SUB_PATH = process.env.SUB_PATH || 'sub';
+const SUB_PATH = process.env.SUB_PATH || 'link';
 const NAME = process.env.NAME || 'Vls';
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 2600;
 
 const metaInfo = execSync(
   'curl -s https://speed.cloudflare.com/meta | awk -F\\" \'{print $26"-"$18}\' | sed -e \'s/ /_/g\'',
@@ -61,7 +61,7 @@ const httpServer = http.createServer((req, res) => {
       </html>
     `);
   } else if (req.url === `/${SUB_PATH}`) {
-    const vlessURL = `vless://${UUID}@www.visa.com.tw:443?encryption=none&security=tls&sni=${DOMAIN}&type=ws&host=${DOMAIN}&path=%2F#${NAME}-${ISP}`;
+    const vlessURL = `vless://${UUID}@104.18.8.53:443?encryption=none&security=tls&sni=${DOMAIN}&type=ws&host=${DOMAIN}&path=%2F#${NAME}-${ISP}`;
     const base64Content = Buffer.from(vlessURL).toString('base64');
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end(base64Content + '\n');
@@ -101,7 +101,7 @@ async function addAccessTask() {
       return;
     } else {
       const fullURL = `https://${DOMAIN}`;
-      const command = `curl -X POST "https://oooo.serv00.net/add-url" -H "Content-Type: application/json" -d '{"url": "${fullURL}"}'`;
+      const command = `curl -X POST "https://www.google.com" -H "Content-Type: application/json" -d '{"url": "${fullURL}"}'`;
       exec(command, (error, stdout, stderr) => {
         if (error) {
           console.error('Error sending request:', error.message);
