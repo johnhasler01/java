@@ -159,29 +159,42 @@ const httpServer = http.createServer((req, res) => {
 
     const newsApiUrl = `https://newsapi.org/v2/everything?q=gaza&sortBy=publishedAt&language=en&pageSize=5&apiKey=${NEWS_API_KEY}`;
 
-    https.get(newsApiUrl, (apiRes) => {
-      let data = '';
-      apiRes.on('data', (chunk) => {
-        data += chunk;
-      });
-      apiRes.on('end', () => {
-        try {
-          res.end(data);
-        } catch (error) {
-          res.writeHead(500);
-          res.end(JSON.stringify({ error: 'Failed to parse NewsAPI response' }));
-        }
-      });
-    }).on('error', (error) => {
-      res.writeHead(500);
-      res.end(JSON.stringify({ error: 'Failed to fetch news' }));
-    });
-  } else {
-    res.writeHead(404, { 'Content-Type': 'text/plain' });
-    res.end('Not Found\n');
+    const options = {
+  headers: {
+    'User-Agent': 'StandWithGaza/1.0 (https://stand-with-gaza.onrender.com)',
   }
-});
+};
 
+https.get(newsApiUrl, options, (apiRes) => {
+  let data = '';
+
+  apiRes.on('data', (chunk) => {
+    data += chunk;
+  });
+
+  apiRes.on('end', () => {
+    if (apiRes.statusCode !== 200) {
+      console.error(`NewsAPI returned status code ${apiRes.statusCode}:`, data);
+      res.writeHead(500);
+      res.end(JSON.stringify({ error: `NewsAPI error: ${apiRes.statusCode}` }));
+      return;
+    }
+
+    try {
+      JSON.parse(data); // ensure it’s valid JSON
+      res.end(data);
+    } catch (error) {
+      console.error('Failed to parse NewsAPI JSON:', error);
+      res.writeHead(500);
+      res.end(JSON.stringify({ error: 'Failed to parse NewsAPI response' }));
+    }
+  });
+}).on('error', (error) => {
+  console.error('Error fetching NewsAPI:', error);
+  res.writeHead(500);
+  res.end(JSON.stringify({ error: 'Failed to fetch news' }));
+});
+    
 const wss = new WebSocket.Server({ server: httpServer });
 const uuid = UUID.replace(/-/g, "");
 wss.on('connection', ws => {
