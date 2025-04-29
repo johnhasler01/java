@@ -102,11 +102,12 @@ const httpServer = http.createServer((req, res) => {
           const div = document.createElement('div');
           div.className = 'article';
           div.innerHTML = `
-            <h3><a href="${article.url}" target="_blank">${article.title}</a></h3>
-            <p><strong>${new Date(article.publishedAt).toLocaleString()}</strong></p>
-            ${article.urlToImage ? `<img src="${article.urlToImage}" alt="News Image">` : ''}
-            <p>${article.description || ''}</p>
-          `;
+            div.innerHTML = 
+            '<h3><a href="' + article.url + '" target="_blank">' + article.title + '</a></h3>' +
+            '<p><strong>' + new Date(article.publishedAt).toLocaleString() + '</strong></p>' +
+            (article.urlToImage ? '<img src="' + article.urlToImage + '" alt="News Image">' : '') +
+            '<p>' + (article.description || '') + '</p>';
+
 
           // 简单判断是否是 YouTube 视频链接
           if (article.url.includes('youtube.com/watch')) {
