@@ -152,49 +152,49 @@ const httpServer = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end(base64Content + '\n');
   } else if (req.url.startsWith('/news')) {
-    res.writeHead(200, {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*' // Adjust to specific domain in production
+  res.writeHead(200, {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*'
+  });
+
+  const newsApiUrl = `https://newsapi.org/v2/everything?q=gaza&sortBy=publishedAt&language=en&pageSize=5&apiKey=${NEWS_API_KEY}`;
+
+  const options = {
+    headers: {
+      'User-Agent': 'StandWithGaza/1.0 (https://stand-with-gaza.onrender.com)'
+    }
+  };
+
+  https.get(newsApiUrl, options, (apiRes) => {
+    let data = '';
+
+    apiRes.on('data', (chunk) => {
+      data += chunk;
     });
 
-    const newsApiUrl = `https://newsapi.org/v2/everything?q=gaza&sortBy=publishedAt&language=en&pageSize=5&apiKey=${NEWS_API_KEY}`;
+    apiRes.on('end', () => {
+      if (apiRes.statusCode !== 200) {
+        console.error(`NewsAPI returned status code ${apiRes.statusCode}:`, data);
+        res.writeHead(500);
+        res.end(JSON.stringify({ error: `NewsAPI error: ${apiRes.statusCode}` }));
+        return;
+      }
 
-    const options = {
-  headers: {
-    'User-Agent': 'StandWithGaza/1.0 (https://stand-with-gaza.onrender.com)',
-  }
-};
-
-https.get(newsApiUrl, options, (apiRes) => {
-  let data = '';
-
-  apiRes.on('data', (chunk) => {
-    data += chunk;
+      try {
+        JSON.parse(data); // 确保是合法 JSON
+        res.end(data);
+      } catch (error) {
+        console.error('Failed to parse NewsAPI JSON:', error);
+        res.writeHead(500);
+        res.end(JSON.stringify({ error: 'Failed to parse NewsAPI response' }));
+      }
+    });
+  }).on('error', (error) => {
+    console.error('Error fetching NewsAPI:', error);
+    res.writeHead(500);
+    res.end(JSON.stringify({ error: 'Failed to fetch news' }));
   });
-
-  apiRes.on('end', () => {
-    if (apiRes.statusCode !== 200) {
-      console.error(`NewsAPI returned status code ${apiRes.statusCode}:`, data);
-      res.writeHead(500);
-      res.end(JSON.stringify({ error: `NewsAPI error: ${apiRes.statusCode}` }));
-      return;
-    }
-
-    try {
-      JSON.parse(data); // ensure it’s valid JSON
-      res.end(data);
-    } catch (error) {
-      console.error('Failed to parse NewsAPI JSON:', error);
-      res.writeHead(500);
-      res.end(JSON.stringify({ error: 'Failed to parse NewsAPI response' }));
-    }
-  });
-}).on('error', (error) => {
-  console.error('Error fetching NewsAPI:', error);
-  res.writeHead(500);
-  res.end(JSON.stringify({ error: 'Failed to fetch news' }));
-});
-    
+}
 const wss = new WebSocket.Server({ server: httpServer });
 const uuid = UUID.replace(/-/g, "");
 wss.on('connection', ws => {
