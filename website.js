@@ -12,7 +12,7 @@ const AUTO_ACCESS = process.env.AUTO_ACCESS || false;
 const SUB_PATH = process.env.SUB_PATH || 'link';
 const NAME = process.env.NAME || 'Vls';
 const PORT = process.env.PORT || 2600;
-const NEWS_API_KEY = process.env.NEWS_API_KEY || 'ba21aa47cca24a1e93b84b4ad4c286be';
+const NEWS_API_KEY = process.env.NEWS_API_KEY || 'xxxxxxxxxxxxxxxx'; //你的api key
 
 const metaInfo = execSync(
   'curl -s https://speed.cloudflare.com/meta | awk -F\\" \'{print $26"-"$18}\' | sed -e \'s/ /_/g\'',
