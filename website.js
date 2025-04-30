@@ -32,172 +32,172 @@ const httpServer = http.createServer((req, res) => {
         <title>Stop the War in Gaza</title>
 <style>
   /* 引入 Google Fonts */
-  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
 
-  /* 全局样式 */
-  body {
-    font-family: 'Roboto', Arial, sans-serif;
-    text-align: center;
-    padding: 60px 20px;
-    background: linear-gradient(135deg, #F5F7FA 0%, #E6F7FF 100%); /* 渐变背景 */
-    color: #333;
-    line-height: 1.6;
-    scroll-behavior: smooth; /* 平滑滚动 */
-    margin: 0;
-  }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-  /* 标题 */
+body {
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(to right, #e0f7fa, #f1f8e9);
+  color: #333;
+  text-align: center;
+  padding: 60px 20px;
+  line-height: 1.6;
+}
+
+h1 {
+  font-size: 3rem;
+  color: #d32f2f;
+  font-weight: 700;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  font-size: 2rem;
+  color: #1976d2;
+  margin: 50px 0 25px;
+}
+
+p {
+  font-size: 1.15rem;
+  max-width: 700px;
+  margin: 15px auto;
+  color: #444;
+}
+
+a {
+  color: #1565c0;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+a:hover {
+  color: #0d47a1;
+  text-decoration: underline;
+}
+
+#google_translate_element {
+  background: #fff;
+  padding: 10px 15px;
+  margin: 20px auto;
+  border-radius: 8px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  display: inline-block;
+}
+
+#news {
+  margin-top: 60px;
+}
+
+.article {
+  background: #ffffff;
+  margin: 25px auto;
+  padding: 25px;
+  max-width: 850px;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  text-align: left;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.article:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.2);
+}
+
+.article img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin-bottom: 18px;
+}
+
+.article h3 {
+  font-size: 1.6rem;
+  color: #222;
+  margin-bottom: 10px;
+}
+
+.article p.description {
+  font-style: italic;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.article p.content {
+  color: #555;
+  line-height: 1.7;
+  margin-bottom: 15px;
+}
+
+.article a.read-more {
+  display: inline-block;
+  padding: 10px 18px;
+  border: 2px solid #1976d2;
+  color: #1976d2;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.article a.read-more:hover {
+  background-color: #1976d2;
+  color: #fff;
+}
+
+iframe {
+  width: 100%;
+  height: 340px;
+  border-radius: 10px;
+  margin-top: 15px;
+}
+
+@media (max-width: 768px) {
   h1 {
-    color: #D32F2F;
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    font-size: 2.2rem;
   }
 
   h2 {
-    color: #1E88E5;
-    font-size: 1.8rem;
-    font-weight: 500;
-    margin: 40px 0 20px;
+    font-size: 1.6rem;
   }
 
-  /* 段落 */
   p {
-    font-size: 1.1rem;
-    max-width: 700px;
-    margin: 15px auto;
-    color: #444;
+    font-size: 1rem;
   }
 
-  /* 链接 */
-  a {
-    color: #1E88E5;
-    text-decoration: none;
-    transition: color 0.3s ease, transform 0.2s ease;
-  }
-  a:hover {
-    color: #1565C0;
-    text-decoration: underline;
-    transform: scale(1.05); /* 轻微放大 */
-  }
-
-  /* 新闻容器 */
-  #news {
-    margin-top: 60px;
-  }
-
-  /* 新闻卡片 */
   .article {
-    background: #FFFFFF;
-    margin: 20px auto;
     padding: 20px;
-    max-width: 800px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    text-align: left;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  .article:hover {
-    transform: translateY(-5px); /* 悬停时轻微上移 */
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-  }
-
-  .article img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-    margin-bottom: 15px;
+    margin: 20px 10px;
   }
 
   .article h3 {
-    margin: 0 0 10px;
-    font-size: 1.5rem;
-    font-weight: 500;
-    color: #333;
+    font-size: 1.4rem;
   }
 
-  .article p.description {
-    font-style: italic;
-    color: #666;
-    margin-bottom: 10px;
-  }
-
-  .article p.content {
-    color: #555;
-    line-height: 1.7;
-    margin-bottom: 15px;
-  }
-
-  .article a.read-more {
-    font-weight: 500;
-    color: #1E88E5;
-    display: inline-block;
-    padding: 8px 16px;
-    border: 1px solid #1E88E5;
-    border-radius: 5px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  .article a.read-more:hover {
-    background-color: #1E88E5;
-    color: #FFFFFF;
-    text-decoration: none;
-  }
-
-  /* YouTube 视频 */
   iframe {
-    width: 100%;
-    height: 315px;
-    border-radius: 8px;
-    margin-top: 15px;
+    height: 220px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 30px 10px;
   }
 
-  /* Google Translate 控件 */
-  #google_translate_element {
-    margin: 20px auto;
-    padding: 10px;
-    background: #FFFFFF;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    max-width: 300px;
+  h1 {
+    font-size: 2rem;
   }
 
-  /* 响应式设计 */
-  @media (max-width: 768px) {
-    h1 {
-      font-size: 2rem;
-    }
-    h2 {
-      font-size: 1.5rem;
-    }
-    p {
-      font-size: 1rem;
-    }
-    .article {
-      padding: 15px;
-      margin: 15px 10px;
-    }
-    .article h3 {
-      font-size: 1.3rem;
-    }
-    iframe {
-      height: 200px;
-    }
+  .article {
+    padding: 18px;
+    margin: 15px 5px;
   }
-
-  @media (max-width: 480px) {
-    body {
-      padding: 30px 15px;
-    }
-    h1 {
-      font-size: 1.8rem;
-    }
-    .article {
-      margin: 10px 5px;
-    }
-  }
+}
 </style>
       </head>
       <body>
