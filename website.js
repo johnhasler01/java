@@ -131,6 +131,26 @@ a:hover {
   margin-bottom: 12px;
 }
 
+.donate-button {
+  display: inline-block;
+  background-color: #D32F2F;
+  color: white;
+  padding: 14px 28px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  text-decoration: none;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.donate-button:hover {
+  background-color: #B71C1C;
+  transform: scale(1.05);
+  text-decoration: none;
+}
+
 .article p.content {
   color: #555;
   line-height: 1.7;
@@ -208,7 +228,11 @@ iframe {
 
         <h1>Gaza is in crisis</h1>
         <p>Families are once again fleeing for their lives in search of safety. Homes are destroyed. Basic necessities - food, clean water, and medicine - are quickly running out.</p>
-        <p><a href="https://donate.unrwa.org/int/en/gaza" target="_blank">The donation page for UNRWA</a></p>
+        <p>
+          <a class="donate-button" href="https://donate.unrwa.org/int/en/gaza" target="_blank" rel="noopener">
+            Donate to UNRWA Now
+          </a>
+        </p>
 
         <div id="news">
           <h2>Live News Updates on Gaza</h2>
