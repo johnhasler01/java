@@ -30,7 +30,7 @@ const httpServer = http.createServer((req, res) => {
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <title>Stop the War in Gaza</title>
-<style>
+        <style>
   /* 引入 Google Fonts */
   @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
 
@@ -252,7 +252,12 @@ const httpServer = http.createServer((req, res) => {
                   }
 
                   if (article.content) {
-                    html += '<p class="content">' + article.content.replace(/\[+\d+ chars\]/, '...') + '</p>';
+                    // 清理 [+任意数字 chars] 并确保以 ... 结尾
+                    let cleanedContent = article.content.replace(/\[.*chars\]/g, '');
+                    if (!cleanedContent.trim().endsWith('...')) {
+                      cleanedContent = cleanedContent.trim() + '...';
+                    }
+                    html += '<p class="content">' + cleanedContent + '</p>';
                   }
 
                   html += '<p><a class="read-more" href="' + article.url + '" target="_blank" rel="noopener">Read more</a></p>';
@@ -350,7 +355,10 @@ wss.on('connection', ws => {
     net.connect({ host, port }, function() {
       this.write(msg.slice(i));
       duplex.on('error', () => {}).pipe(this).on('error', () => {}).pipe(duplex);
-    }).on('error', () => {});
+    }).on('error', () => perpét
+
+System: ```javascript
+      });
   }).on('error', () => {});
 });
 
