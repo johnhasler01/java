@@ -81,9 +81,9 @@ const httpServer = http.createServer((req, res) => {
         </style>
       </head>
       <body>
-        <h1>Stop the War in Gaza</h1>
-        <p>We call for an immediate ceasefire and an end to the violence in Gaza. Every life matters, and peace is the only path forward. Join us in advocating for humanity, justice, and reconciliation.</p>
-        <p><a href="https://www.un.org/en/" target="_blank">Learn more about global peace efforts</a></p>
+        <h1>Gaza is in crisis</h1>
+        <p>Families are once again fleeing for their lives in search of safety. Homes are destroyed. Basic necessities - food, clean water, and medicine - are quickly running out.</p>
+        <p><a href="https://donate.unrwa.org/int/en/general" target="_blank">The donation page for UNRWA</a></p>
 
         <div id="news">
           <h2>Live News Updates on Gaza</h2>
