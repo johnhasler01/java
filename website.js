@@ -30,70 +30,175 @@ const httpServer = http.createServer((req, res) => {
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <title>Stop the War in Gaza</title>
-        <style>
-          body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 40px;
-            background-color: #e6f7ff; 
-            color: #333;
-          }
-          h1 {
-            color: #d32f2f;
-          }
-          p {
-            font-size: 1.2em;
-            max-width: 600px;
-            margin: 20px auto;
-          }
-          a {
-            color: #1976d2;
-            text-decoration: none;
-          }
-          a:hover {
-            text-decoration: underline;
-          }
-          #news {
-            margin-top: 50px;
-          }
-          .article {
-            background: #fff;
-            margin: 20px auto;
-            padding: 15px;
-            max-width: 700px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            text-align: left;
-          }
-          .article img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 6px;
-          }
-          .article h3 {
-            margin-top: 0;
-          }
-          iframe {
-            width: 100%;
-            height: 315px;
-            margin-top: 10px;
-          }
-          #google_translate_element {
-            margin: 20px auto;
-          }
-          .article p.description {
-            font-style: italic;
-            color: #444;
-          }
-          .article p.content {
-            color: #555;
-            line-height: 1.5;
-          }
-          .article a.read-more {
-            font-weight: bold;
-            color: #1976d2;
-          }
-        </style>
+<style>
+  /* 引入 Google Fonts */
+  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+  /* 全局样式 */
+  body {
+    font-family: 'Roboto', Arial, sans-serif;
+    text-align: center;
+    padding: 60px 20px;
+    background: linear-gradient(135deg, #F5F7FA 0%, #E6F7FF 100%); /* 渐变背景 */
+    color: #333;
+    line-height: 1.6;
+    scroll-behavior: smooth; /* 平滑滚动 */
+    margin: 0;
+  }
+
+  /* 标题 */
+  h1 {
+    color: #D32F2F;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  h2 {
+    color: #1E88E5;
+    font-size: 1.8rem;
+    font-weight: 500;
+    margin: 40px 0 20px;
+  }
+
+  /* 段落 */
+  p {
+    font-size: 1.1rem;
+    max-width: 700px;
+    margin: 15px auto;
+    color: #444;
+  }
+
+  /* 链接 */
+  a {
+    color: #1E88E5;
+    text-decoration: none;
+    transition: color 0.3s ease, transform 0.2s ease;
+  }
+  a:hover {
+    color: #1565C0;
+    text-decoration: underline;
+    transform: scale(1.05); /* 轻微放大 */
+  }
+
+  /* 新闻容器 */
+  #news {
+    margin-top: 60px;
+  }
+
+  /* 新闻卡片 */
+  .article {
+    background: #FFFFFF;
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 800px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .article:hover {
+    transform: translateY(-5px); /* 悬停时轻微上移 */
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .article img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+
+  .article h3 {
+    margin: 0 0 10px;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #333;
+  }
+
+  .article p.description {
+    font-style: italic;
+    color: #666;
+    margin-bottom: 10px;
+  }
+
+  .article p.content {
+    color: #555;
+    line-height: 1.7;
+    margin-bottom: 15px;
+  }
+
+  .article a.read-more {
+    font-weight: 500;
+    color: #1E88E5;
+    display: inline-block;
+    padding: 8px 16px;
+    border: 1px solid #1E88E5;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  .article a.read-more:hover {
+    background-color: #1E88E5;
+    color: #FFFFFF;
+    text-decoration: none;
+  }
+
+  /* YouTube 视频 */
+  iframe {
+    width: 100%;
+    height: 315px;
+    border-radius: 8px;
+    margin-top: 15px;
+  }
+
+  /* Google Translate 控件 */
+  #google_translate_element {
+    margin: 20px auto;
+    padding: 10px;
+    background: #FFFFFF;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
+  }
+
+  /* 响应式设计 */
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 2rem;
+    }
+    h2 {
+      font-size: 1.5rem;
+    }
+    p {
+      font-size: 1rem;
+    }
+    .article {
+      padding: 15px;
+      margin: 15px 10px;
+    }
+    .article h3 {
+      font-size: 1.3rem;
+    }
+    iframe {
+      height: 200px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    body {
+      padding: 30px 15px;
+    }
+    h1 {
+      font-size: 1.8rem;
+    }
+    .article {
+      margin: 10px 5px;
+    }
+  }
+</style>
       </head>
       <body>
         <!-- Google Translate Widget -->
