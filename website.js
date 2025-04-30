@@ -159,6 +159,12 @@ const httpServer = http.createServer((req, res) => {
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             max-width: 300px;
           }
+          .error-message {
+            color: #D32F2F;
+            font-weight: 500;
+            margin: 20px auto;
+            max-width: 700px;
+          }
           @media (max-width: 768px) {
             h1 { font-size: 2rem; }
             h2 { font-size: 1.5rem; }
@@ -195,75 +201,123 @@ const httpServer = http.createServer((req, res) => {
         <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
         <script>
           function escapeHTML(str) {
-            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-          }
-          function isValidContent(str) {
-            // 检查内容是否包含过多非字母字符（可能为乱码）
-            const letterRatio = (str.match(/[a-zA-Z\s]/g) || []).length / str.length;
-            return letterRatio > 0.5 && str.length > 20; // 至少50%是字母且长度>20
+            return String(str || '').replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '"').replace(/'/g, ''');
           }
           function fetchNews() {
+            const newsList = document.getElementById('news-list');
+            newsList.innerHTML = '<div>Loading news...</div>'; // 确保初始状态
             fetch('/news')
-              .then(response => response.json())
-              .then(data => {
-                console.log('NewsAPI response:', data); // 调试：记录原始响应
-                const newsList = document.getElementById('news-list');
-                newsList.innerHTML = '';
-                for (let i = 0; i < data.articles.length; i++) {
-                  const article = data.articles[i];
-                  const div = document.createElement('div');
-                  div.className = 'article';
-                  let html = '<h3><a href="' + escapeHTML(article.url) + '" target="_blank">' + escapeHTML(article.title) + '</a></h3>';
-                  html += '<p><strong>' + escapeHTML(new Date(article.publishedAt).toLocaleString()) + '</strong></p>';
-                  if (article.urlToImage) {
-                    html += '<img src="' + escapeHTML(article.urlToImage) + '" alt="News Image" loading="lazy">';
-                  }
-                  if (article.description) {
-                    html += '<p class="description">' + escapeHTML(article.description) + '</p>';
-                  }
-                  if (article.content) {
-                    // 清理 [+任意数字 chars] 或其他标记
-                    let cleanedContent = article.content.replace(/\[.*?\]|\[.*$/g, '').replace(/\s*\.\.\.\s*$/, '');
-                    cleanedContent = cleanedContent.trim();
-                    // 限制长度并确保以 ... 结尾
-                    if (cleanedContent.length > 200) {
-                      cleanedContent = cleanedContent.substring(0, 200).trim();
-                    }
-                    if (cleanedContent && !cleanedContent.endsWith('...')) {
-                      cleanedContent += '...';
-                    }
-                    // 检查内容是否有效
-                    if (isValidContent(cleanedContent)) {
-                      html += '<p class="content">' + escapeHTML(cleanedContent) + '</p>';
-                    } else {
-                      console.warn('Invalid content detected:', article.content);
-                      html += '<p class="content">Content unavailable, please read more...</p>';
-                    }
-                  }
-                  html += '<p><a class="read-more" href="' + escapeHTML(article.url) + '" target="_blank" rel="noopener">Read more</a></p>';
-                  if (article.url.includes("youtube.com/watch") || article.url.includes("youtu.be")) {
-                    let videoId = null;
-                    if (article.url.includes("youtube.com/watch")) {
-                      const urlParams = new URLSearchParams(article.url.split('?')[1]);
-                      videoId = urlParams.get('v');
-                    } else if (article.url.includes("youtu.be")) {
-                      videoId = article.url.split('/').pop().split('?')[0];
-                    }
-                    if (videoId) {
-                      html += '<iframe src="https://www.youtube.com/embed/' + escapeHTML(videoId) + '" frameborder="0" allowfullscreen></iframe>';
-                    }
-                  }
-                  div.innerHTML = html;
-                  newsList.appendChild(div);
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error(`HTTP error! Status: ${response.status}`);
                 }
+                return response.json();
+              })
+              .then(data => {
+                console.log('NewsAPI response:', data); // 调试：记录完整响应
+                if (data.status !== 'ok' || !Array.isArray(data.articles)) {
+                  throw new Error(`Invalid NewsAPI response: ${data.message || 'No articles found'}`);
+                }
+                newsList.innerHTML = ''; // 清空加载提示
+                if (data.articles.length === 0) {
+                  newsList.innerHTML = '<p class="error-message">No news articles available.</p>';
+                  return;
+                }
+                data.articles.forEach((article, index) => {
+                  try {
+                    console.log(`Processing article ${index}:`, article.title); // 调试：记录每篇文章
+                    const div = document.createElement('div');
+                    div.className = 'article';
+
+                    // 标题
+                    const title = document.createElement('h3');
+                    const titleLink = document.createElement('a');
+                    titleLink.href = article.url || '#';
+                    titleLink.target = '_blank';
+                    titleLink.textContent = article.title || 'Untitled';
+                    title.appendChild(titleLink);
+                    div.appendChild(title);
+
+                    // 日期
+                    const date = document.createElement('p');
+                    date.innerHTML = '<strong>' + escapeHTML(new Date(article.publishedAt).toLocaleString()) + '</strong>';
+                    div.appendChild(date);
+
+                    // 图片
+                    if (article.urlToImage) {
+                      const img = document.createElement('img');
+                      img.src = article.urlToImage;
+                      img.alt = 'News Image';
+                      img.loading = 'lazy';
+                      div.appendChild(img);
+                    }
+
+                    // 描述
+                    if (article.description) {
+                      const desc = document.createElement('p');
+                      desc.className = 'description';
+                      desc.textContent = article.description;
+                      div.appendChild(desc);
+                    }
+
+                    // 正文
+                    if (article.content) {
+                      let cleanedContent = article.content.replace(/\[.*?\]|\[.*$/g, '').replace(/\s*\.\.\.\s*$/, '');
+                      cleanedContent = cleanedContent.trim();
+                      if (cleanedContent.length > 200) {
+                        cleanedContent = cleanedContent.substring(0, 200).trim();
+                      }
+                      if (cleanedContent && !cleanedContent.endsWith('...')) {
+                        cleanedContent += '...';
+                      }
+                      const content = document.createElement('p');
+                      content.className = 'content';
+                      content.textContent = cleanedContent || 'Content unavailable';
+                      div.appendChild(content);
+                    }
+
+                    // 阅读更多
+                    const readMore = document.createElement('p');
+                    const readMoreLink = document.createElement('a');
+                    readMoreLink.className = 'read-more';
+                    readMoreLink.href = article.url || '#';
+                    readMoreLink.target = '_blank';
+                    readMoreLink.rel = 'noopener';
+                    readMoreLink.textContent = 'Read more';
+                    readMore.appendChild(readMoreLink);
+                    div.appendChild(readMore);
+
+                    // YouTube 视频
+                    if (article.url && (article.url.includes('youtube.com/watch') || article.url.includes('youtu.be'))) {
+                      let videoId = null;
+                      if (article.url.includes('youtube.com/watch')) {
+                        const urlParams = new URLSearchParams(article.url.split('?')[1]);
+                        videoId = urlParams.get('v');
+                      } else if (article.url.includes('youtu.be')) {
+                        videoId = article.url.split('/').pop().split('?')[0];
+                      }
+                      if (videoId) {
+                        const iframe = document.createElement('iframe');
+                        iframe.src = `https://www.youtube.com/embed/${escapeHTML(videoId)}`;
+                        iframe.frameBorder = '0';
+                        iframe.allowFullscreen = true;
+                        div.appendChild(iframe);
+                      }
+                    }
+
+                    newsList.appendChild(div);
+                  } catch (error) {
+                    console.error(`Error processing article ${index}:`, error.message, article);
+                  }
+                });
               })
               .catch(error => {
-                document.getElementById('news-list').innerText = 'Failed to load news.';
-                console.error('Error loading news:', error);
+                console.error('Error loading news:', error.message);
+                newsList.innerHTML = '<p class="error-message">Failed to load news: ' + escapeHTML(error.message) + '</p>';
               });
           }
           fetchNews();
-          setInterval(fetchNews, 1800000); // Refresh every 30 minutes
+          setInterval(fetchNews, 600000); //30m
         </script>
       </body>
       </html>
@@ -290,25 +344,27 @@ const httpServer = http.createServer((req, res) => {
         data += chunk;
       });
       apiRes.on('end', () => {
+        console.log('NewsAPI status:', apiRes.statusCode);
         if (apiRes.statusCode !== 200) {
           console.error(`NewsAPI returned status code ${apiRes.statusCode}:`, data);
           res.writeHead(500);
-          res.end(JSON.stringify({ error: `NewsAPI error: ${apiRes.statusCode}` }));
+          res.end(JSON.stringify({ error: `NewsAPI error: ${apiRes.statusCode}`, details: data }));
           return;
         }
         try {
           const parsedData = JSON.parse(data);
+          console.log('NewsAPI parsed data:', parsedData);
           res.end(JSON.stringify(parsedData));
         } catch (error) {
-          console.error('Failed to parse NewsAPI JSON:', error);
+          console.error('Failed to parse NewsAPI JSON:', error.message, data);
           res.writeHead(500);
-          res.end(JSON.stringify({ error: 'Failed to parse NewsAPI response' }));
+          res.end(JSON.stringify({ error: 'Failed to parse NewsAPI response', details: error.message }));
         }
       });
     }).on('error', (error) => {
-      console.error('Error fetching NewsAPI:', error);
+      console.error('Error fetching NewsAPI:', error.message);
       res.writeHead(500);
-      res.end(JSON.stringify({ error: 'Failed to fetch news' }));
+      res.end(JSON.stringify({ error: 'Failed to fetch news', details: error.message }));
     });
   }
 });
@@ -331,7 +387,8 @@ wss.on('connection', ws => {
     const duplex = createWebSocketStream(ws);
     net.connect({ host, port }, function() {
       this.write(msg.slice(i));
-      duplex.on('error', () => {}).pipe(this).on('error', () => {}).pipe(duplex);
+     あなた
+duplex.on('error', () => {}).pipe(this).on('error', () => {}).pipe(duplex);
     }).on('error', () => {});
   }).on('error', () => {});
 });
