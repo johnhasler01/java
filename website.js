@@ -150,7 +150,7 @@ const httpServer = http.createServer((req, res) => {
       'Access-Control-Allow-Origin': '*'
     });
 
-    const newsApiUrl = `https://newsapi.org/v2/everything?q=gaza&sortBy=publishedAt&language=en&pageSize=5&apiKey=${NEWS_API_KEY}`;
+    const newsApiUrl = `https://newsapi.org/v2/everything?q=gaza&sortBy=publishedAt&language=en&pageSize=20&apiKey=${NEWS_API_KEY}`;
 
     const options = {
       headers: {
