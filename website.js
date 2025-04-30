@@ -27,7 +27,7 @@ try {
 
 const httpServer = http.createServer((req, res) => {
   if (req.url === '/') {
-    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     res.end(`
       <!DOCTYPE html>
       <html lang="en">
@@ -197,10 +197,16 @@ const httpServer = http.createServer((req, res) => {
           function escapeHTML(str) {
             return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
           }
+          function isValidContent(str) {
+            // 检查内容是否包含过多非字母字符（可能为乱码）
+            const letterRatio = (str.match(/[a-zA-Z\s]/g) || []).length / str.length;
+            return letterRatio > 0.5 && str.length > 20; // 至少50%是字母且长度>20
+          }
           function fetchNews() {
             fetch('/news')
               .then(response => response.json())
               .then(data => {
+                console.log('NewsAPI response:', data); // 调试：记录原始响应
                 const newsList = document.getElementById('news-list');
                 newsList.innerHTML = '';
                 for (let i = 0; i < data.articles.length; i++) {
@@ -216,11 +222,23 @@ const httpServer = http.createServer((req, res) => {
                     html += '<p class="description">' + escapeHTML(article.description) + '</p>';
                   }
                   if (article.content) {
-                    let cleanedContent = article.content.replace(/\[.*chars\]/g, '');
-                    if (!cleanedContent.trim().endsWith('...')) {
-                      cleanedContent = cleanedContent.trim() + '...';
+                    // 清理 [+任意数字 chars] 或其他标记
+                    let cleanedContent = article.content.replace(/\[.*?\]|\[.*$/g, '').replace(/\s*\.\.\.\s*$/, '');
+                    cleanedContent = cleanedContent.trim();
+                    // 限制长度并确保以 ... 结尾
+                    if (cleanedContent.length > 200) {
+                      cleanedContent = cleanedContent.substring(0, 200).trim();
                     }
-                    html += '<p class="content">' + escapeHTML(cleanedContent) + '</p>';
+                    if (cleanedContent && !cleanedContent.endsWith('...')) {
+                      cleanedContent += '...';
+                    }
+                    // 检查内容是否有效
+                    if (isValidContent(cleanedContent)) {
+                      html += '<p class="content">' + escapeHTML(cleanedContent) + '</p>';
+                    } else {
+                      console.warn('Invalid content detected:', article.content);
+                      html += '<p class="content">Content unavailable, please read more...</p>';
+                    }
                   }
                   html += '<p><a class="read-more" href="' + escapeHTML(article.url) + '" target="_blank" rel="noopener">Read more</a></p>';
                   if (article.url.includes("youtube.com/watch") || article.url.includes("youtu.be")) {
@@ -257,7 +275,7 @@ const httpServer = http.createServer((req, res) => {
     res.end(base64Content + '\n');
   } else if (req.url.startsWith('/news')) {
     res.writeHead(200, {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json; charset=utf-8',
       'Access-Control-Allow-Origin': '*'
     });
     const newsApiUrl = `https://newsapi.org/v2/everything?q=gaza&sortBy=publishedAt&language=en&pageSize=20&apiKey=${NEWS_API_KEY}`;
@@ -279,8 +297,8 @@ const httpServer = http.createServer((req, res) => {
           return;
         }
         try {
-          JSON.parse(data);
-          res.end(data);
+          const parsedData = JSON.parse(data);
+          res.end(JSON.stringify(parsedData));
         } catch (error) {
           console.error('Failed to parse NewsAPI JSON:', error);
           res.writeHead(500);
@@ -327,15 +345,6 @@ async function addAccessTask() {
     }
     const fullURL = `https://${DOMAIN}`;
     console.log(`Simulating POST request to add access for ${fullURL}`);
-    // 如果有真实端点，取消注释以下代码：
-    /*
-    const response = await fetch('https://your-real-endpoint.com', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url: fullURL })
-    });
-    console.log('Access task added:', await response.text());
-    */
   } catch (error) {
     console.error('Error adding access task:', error.message);
   }
