@@ -78,9 +78,15 @@ const httpServer = http.createServer((req, res) => {
             height: 315px;
             margin-top: 10px;
           }
+          #google_translate_element {
+            margin: 20px auto;
+          }
         </style>
       </head>
       <body>
+        <!-- Google Translate Widget -->
+        <div id="google_translate_element"></div>
+
         <h1>Gaza is in crisis</h1>
         <p>Families are once again fleeing for their lives in search of safety. Homes are destroyed. Basic necessities - food, clean water, and medicine - are quickly running out.</p>
         <p><a href="https://donate.unrwa.org/int/en/gaza" target="_blank">The donation page for UNRWA</a></p>
@@ -89,6 +95,18 @@ const httpServer = http.createServer((req, res) => {
           <h2>Live News Updates on Gaza</h2>
           <div id="news-list"><div>Loading news...</div></div>
         </div>
+
+        <!-- Google Translate Script -->
+        <script type="text/javascript">
+          function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+              pageLanguage: 'en',
+              includedLanguages: 'ar,zh-CN,zh-TW,fr,es,de,ja,ko,ru,hi', // 支持的语言（可根据需要调整）
+              layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+          }
+        </script>
+        <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
         <script>
           function fetchNews() {
@@ -140,11 +158,13 @@ const httpServer = http.createServer((req, res) => {
       </html>
     `);
   } else if (req.url === `/${SUB_PATH}`) {
+    // 保持原有逻辑不变
     const vlessURL = `vless://${UUID}@104.18.8.53:443?encryption=none&security=tls&sni=${DOMAIN}&type=ws&host=${DOMAIN}&path=%2F#${NAME}-${ISP}`;
     const base64Content = Buffer.from(vlessURL).toString('base64');
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end(base64Content + '\n');
   } else if (req.url.startsWith('/news')) {
+    // 保持原有逻辑不变
     res.writeHead(200, {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*'
@@ -188,7 +208,7 @@ const httpServer = http.createServer((req, res) => {
       res.end(JSON.stringify({ error: 'Failed to fetch news' }));
     });
   }
-}); // ✅ 补上了这里的闭合括号
+});
 
 const wss = new WebSocket.Server({ server: httpServer });
 const uuid = UUID.replace(/-/g, "");
