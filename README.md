@@ -1,7 +1,7 @@
 # Build a news push website using Node.js
 ```MUST put Environment Variables:DOMAIN='domain provide'```
 #
-port:2600
+Environment Variables:```NEWS_API_KEY='YOUR-API-KEY'```
 ```
-see base64 link:/link
+see API KEY WORK:/news
 ```
