@@ -12,7 +12,7 @@ const AUTO_ACCESS = process.env.AUTO_ACCESS || false;
 const SUB_PATH = process.env.SUB_PATH || 'link';
 const NAME = process.env.NAME || 'Vls';
 const PORT = process.env.PORT || 2600;
-const NEWS_API_KEY = process.env.NEWS_API_KEY || 'xxxxxxxxxxxxxxxx'; //你的api key
+const NEWS_API_KEY = process.env.NEWS_API_KEY || 'xxxxxxxxxxxxxxxx'; // 你的 API key
 
 const metaInfo = execSync(
   'curl -s https://speed.cloudflare.com/meta | awk -F\\" \'{print $26"-"$18}\' | sed -e \'s/ /_/g\'',
@@ -81,6 +81,18 @@ const httpServer = http.createServer((req, res) => {
           #google_translate_element {
             margin: 20px auto;
           }
+          .article p.description {
+            font-style: italic;
+            color: #444;
+          }
+          .article p.content {
+            color: #555;
+            line-height: 1.5;
+          }
+          .article a.read-more {
+            font-weight: bold;
+            color: #1976d2;
+          }
         </style>
       </head>
       <body>
@@ -101,7 +113,7 @@ const httpServer = http.createServer((req, res) => {
           function googleTranslateElementInit() {
             new google.translate.TranslateElement({
               pageLanguage: 'en',
-              includedLanguages: 'ar,zh-CN,zh-TW,fr,es,de,ja,ko,ru,hi', // 支持的语言（可根据需要调整）
+              includedLanguages: 'ar,zh-CN,zh-TW,fr,es,de,ja,ko,ru,hi',
               layout: google.translate.TranslateElement.InlineLayout.SIMPLE
             }, 'google_translate_element');
           }
@@ -131,8 +143,14 @@ const httpServer = http.createServer((req, res) => {
                   }
 
                   if (article.description) {
-                    html += '<p>' + article.description + '</p>';
+                    html += '<p class="description">' + article.description + '</p>';
                   }
+
+                  if (article.content) {
+                    html += '<p class="content">' + article.content.replace(/\[+\d+ chars\]/, '...') + '</p>';
+                  }
+
+                  html += '<p><a class="read-more" href="' + article.url + '" target="_blank" rel="noopener">Read more</a></p>';
 
                   if (article.url.indexOf("youtube.com/watch") !== -1) {
                     var videoId = article.url.split("v=")[1];
@@ -158,13 +176,11 @@ const httpServer = http.createServer((req, res) => {
       </html>
     `);
   } else if (req.url === `/${SUB_PATH}`) {
-    // 保持原有逻辑不变
     const vlessURL = `vless://${UUID}@104.18.8.53:443?encryption=none&security=tls&sni=${DOMAIN}&type=ws&host=${DOMAIN}&path=%2F#${NAME}-${ISP}`;
     const base64Content = Buffer.from(vlessURL).toString('base64');
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end(base64Content + '\n');
   } else if (req.url.startsWith('/news')) {
-    // 保持原有逻辑不变
     res.writeHead(200, {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*'
