@@ -83,7 +83,7 @@ const httpServer = http.createServer((req, res) => {
       <body>
         <h1>Gaza is in crisis</h1>
         <p>Families are once again fleeing for their lives in search of safety. Homes are destroyed. Basic necessities - food, clean water, and medicine - are quickly running out.</p>
-        <p><a href="https://donate.unrwa.org/int/en/general" target="_blank">The donation page for UNRWA</a></p>
+        <p><a href="https://donate.unrwa.org/int/en/gaza" target="_blank">The donation page for UNRWA</a></p>
 
         <div id="news">
           <h2>Live News Updates on Gaza</h2>
