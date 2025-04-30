@@ -124,8 +124,10 @@ a:hover {
 }
 
 .article p.description {
-  font-style: italic;
-  color: #666;
+  font-style: normal;         /* 取消斜体 */
+  font-weight: 700;           /* 加粗 */
+  font-size: 1.2rem;          /* 字体变大 */
+  color: #333;                /* 字体颜色更深 */
   margin-bottom: 12px;
 }
 
